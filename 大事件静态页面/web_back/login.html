@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/iconfont.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/template-web.js"></script>
 </head>
 
 <body>
@@ -28,9 +30,42 @@
                 <input type="submit" class="input_sub" value="登 录">
             </form>
         </div>
-    </div> 
+    </div>
 
-    
+    <!-- *******************************登录 S************************************ -->
+    <script>
+        var baseUrl = 'http://localhost:8080';
+        $('.input_sub').click(function (e) {
+            e.preventDefault();
+            //获取登录名
+            var input_txt = $('.input_txt').val();
+            //获取密码
+            var input_pass = $('.input_pass').val();
+            console.log(input_txt);
+            console.log(input_pass);
+            $.ajax({
+                type: 'post',
+                url: baseUrl + '/admin/user/login',
+                data: {
+                    username: input_txt,
+                    password: input_pass,
+                },
+                dataType:'json',
+                success: function (res) {
+                    if (res.msg == "登录成功") {
+                        alert("登录成功");
+                        location.href = "index.html";
+                    } else {
+                        alert("登录失败");
+                    }
+                    $('.input_txt').val("");
+                    $('.input_pass').val("");
+                }
+            })
+        })
+    </script>
+    <!-- *******************************登录 E************************************ -->
+
 </body>
 
 </html>
