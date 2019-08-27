@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>大事件-首页</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- 模板引擎，jq引入一波 -->
+    <script src="./js/template-web.js"></script>
+    <script src="./js/jquery-1.12.4.min.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <a href="#" class="logo fl"><img src="images/logo.png" alt="logo"></a>
+        <div class="search_form fl">
+            <input type="text" class="search_txt" placeholder="黑洞照片">
+            <button class="search_btn"><i class="fa fa-search"></i></button>
+        </div>
+        <div class="link_info fr">
+            <a href="#"><i class="fa fa-angle-right"></i>&nbsp;&nbsp;网站地图</a><br>
+            <a href="#"><i class="fa fa-angle-right"></i>&nbsp;&nbsp;招聘信息</a>
+        </div>
+    </div>
+
+    <div class="menu_con">
+        <div class="menu">
+            <div class="menu_collapse fl">
+                <a href="javascript:;" class="level_one"><i class="fa fa-list-ul"></i>全部分类</a>
+                <ul class="level_two">
+                    <li class="up"></li>
+                    <!-- 文章标题 引擎模板 -->
+                </ul>
+            </div>
+            <ul class="left_menu fl">
+                <!-- 文章标题 引擎模板 -->
+            </ul>
+            <ul class="right_menu fr">
+                <li><a href="#">科技专题</a></li>
+                <li><a href="#">财经专题</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main_con clearfix">
+        <div class="left_con">
+            <ul class="focus_list">
+                <!-- 热点图 模板引擎 -->
+            </ul>
+
+            <div class="common_title">
+                <h3><i class="fa fa-edit"></i> 最新资讯</h3>
+                <a href="#" class="more"><i class="fa fa-angle-double-right"></i></a>
+            </div>
+            <!-- 最新资讯 模板引擎 -->
+        </div>
+        <div class="right_con">
+            <div class="common_wrap">
+                <h3><i class="fa fa-bar-chart"></i> 一周热门排行</h3>
+                <ul class="content_list">
+                    <!-- 一周热门排行 模板引擎 -->
+                </ul>
+            </div>
+            <div class="common_wrap">
+                <h3><i class="fa fa-commenting-o"></i> 最新评论</h3>
+                <ul class="content_list comment_list">
+                    <!-- 最新评论 模板引擎 -->
+                </ul>
+            </div>
+            <div class="common_wrap">
+                <h3><i class="fa fa-bullseye"></i> 焦点关注</h3>
+                <ul class="content_list guanzhu_list">
+                    <!-- 焦点关注 模板引擎 -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer clearfix">
+        <div class="foot_link">
+            <a href="#">关于我们</a>
+            <span>|</span>
+            <a href="#">联系我们</a>
+            <span>|</span>
+            <a href="#">招聘人才</a>
+            <span>|</span>
+            <a href="#">友情链接</a>
+        </div>
+        <p>CopyRight © 2019 深圳大事件信息技术股份有限公司 All Rights Reserved</p>
+        <p>电话：0755-****888 粤ICP备*******8号</p>
+    </div>
+
+    <!-- 热点图片 引擎模板 -->
+    <script id="hotDianPic" type="text/html">
+        {{each arr}}
+        {{if $index==0}}
+        <li class="first">
+            {{else}}
+        <li>
+            {{/if}}
+            <a href="article.html?id={{$value.id}}"><img src="{{$value.cover}}" alt=""></a>
+            <p>{{$value.title}}</p>
+        </li>
+        {{/each}}
+    </script>
+    <!--  一周热门排行 引擎模板 -->
+    <script id="hotDoc" type="text/html">
+        <!-- {{each arr}}
+        {{if $index==0}}
+        <li><span class="first">1</span><a href="article.html?id={{$value.id}}">{{$value.title}}</a></li>
+        {{ else if $index==1}}
+        <li><span class="second">2</span><a href="article.html?id={{$value.id}}">{{$value.title}}</a></li>
+        {{ else if $index==2}}
+        <li><span class="third">3</span><a href="article.html?id={{$value.id}}">{{$value.title}}</a></li>
+        {{else}}
+        <li><span>{{$index + 1}}</span><a href="article.html?id={{$value.id}}">{{$value.title}}</a></li>
+        {{/if}}
+        {{/each}} -->
+        {{each arr}}
+    <li>
+        {{if $index == 0}}
+        <span class="first">1</span>
+        {{else if $index == 1}}
+        <span class="second">2</span>
+        {{else if $index == 2}}
+        <span class="third">3</span>
+        {{else}}
+        <span>{{$index + 1}}</span>
+        {{/if}}
+        <a href="article.html?id={{$value.id}}">{{$value.title}}</a>
+    </li>
+    {{/each}}
+    </script>
+    <!--  最新评论 引擎模板 -->
+    <script id="zuixinpinglun" type="text/html">
+        {{each arr}}
+        <li>
+            <span>{{$value.author.substring(0,1)}}</span>
+            <b><em>{{$value.author}}</em> 9个月前({{$value.date.substring(5)}})说:</b>
+            <strong>{{$value.intro}}</strong>
+        </li>
+        {{/each}}
+    </script>
+    <!--  最新资讯 引擎模板 -->
+    <script id="zuixinzixun" type="text/html">
+        {{each arr}}
+        <div class="common_news_list">
+            <a href="#" class="list_pic"><img src="{{$value.cover}}" alt=""></a>
+            <h4><a href="article.html?id={{$value.id}}">{{$value.title}}</a></h4>
+            <p>{{$value.intro}}</p>
+            <div class="new_info">
+                <span>标签：{{$value.category}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i class="fa fa-eye"></i>&nbsp;
+                    阅读({{$value.read}})&nbsp;&nbsp;&nbsp;<i class="fa fa-commenting"></i>&nbsp;评论({{$value.comments}}
+                    )</span>
+                <b>发布于 {{$value.date}}</b>
+            </div>
+        </div>
+        {{/each}}
+    </script>
+    <!--  焦点资讯 引擎模板 -->
+    <script id="jiaodianguanzhu" type="text/html">
+        {{each arr}}
+        <li><a href="article.html?id={{$value.id}}">{{ $value.title }}</a></li>
+        {{/each}}
+    </script>
+    <!--  文章类型 引擎模板 -->
+    <script id="wenzhangleixing" type="text/html">
+        {{each arr}}
+        <li><a href="article.html?id={{$value.id}}">{{$value.name}}</a></li>
+        {{/each}}
+    </script>
+
+    <!-- **********************************热点图显示 S******************************-->
+    <script>
+        var baseUrl = 'http://localhost:8080'
+        $.get(baseUrl + '/index/hotpic', function (res) {
+            var str = template('hotDianPic', {
+                arr: res.data,
+            });
+            $('.focus_list').html(str);
+        }, 'json')
+    </script>
+    <!-- **********************************热点图显示 E******************************-->
+
+    <!-- **********************************一周模板排行 S******************************-->
+    <script>
+        $.ajax({
+            type: 'get',
+            url: baseUrl + '/index/rank',
+            dataType: 'json',
+            success: function (res) {
+                var str = template('hotDoc', {
+                    arr: res.data,
+                });
+                $('.right_con ul:eq(0)').html(str);
+            }
+        })
+    </script>
+    <!-- **********************************一周模板排行 E******************************-->
+
+    <!-- **********************************最新评论 S**********************************-->
+    <script>
+        $.get(baseUrl + '/index/latest_comment', function (res) {
+            var str = template('zuixinpinglun', {
+                arr: res.data,
+            });
+            $('.comment_list').html(str);
+        }, 'json')
+    </script>
+    <!-- **********************************最新评论 E**********************************-->
+
+    <!-- **********************************最新资讯 S********************************** -->
+    <script>
+        $.ajax({
+            type: 'get',
+            url: baseUrl + '/index/latest',
+            dataType: 'json',
+            success: function (res) {
+                var str = template('zuixinzixun', {
+                    arr: res.data,
+                });
+                $('.common_title').after(str);
+            }
+
+        })
+    </script>
+    <!-- **********************************最新资讯 E********************************** -->
+
+    <!-- **********************************焦点关注 S********************************** -->
+    <script>
+        $.get(baseUrl + '/index/attention', function (res) {
+            var str = template('jiaodianguanzhu', {
+                arr: res.data,
+            });
+            $('.guanzhu_list').html(str);
+        }, 'json')
+    </script>
+    <!-- **********************************焦点关注 E********************************** -->
+
+    <!-- *********************************文章类型 S********************************** -->
+    <script>
+        $.ajax({
+            type: 'get',
+            url: baseUrl + '/index/category',
+            dataType: 'json',
+            success: function (res) {
+                var str = template('wenzhangleixing', {
+                    arr: res.data,
+                });
+                $('.level_two').append(str);
+                $('.left_menu').html(str);
+            }
+        })
+    </script>
+    <!-- *********************************文章类型 E********************************** -->
+
+    <!-- *********************************文章搜索 S********************************** -->
+    <script>
+        $('.search_btn').click(function (e) {
+            e.preventDefault();
+            var value = $('.search_txt').val();
+            location.href = 'list.html?value=' + value;
+        });
+
+        $(document).keydown(function (event) {
+            if (event.keyCode == 13) {
+                var value = $('.search_txt').val();
+                location.href = 'list.html?value=' + value;
+            }
+        });
+    </script>
+    <!-- *********************************文章搜索 E********************************** -->
+
+</body>
+
+</html>
