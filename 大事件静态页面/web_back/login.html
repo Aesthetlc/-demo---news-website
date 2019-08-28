@@ -25,8 +25,8 @@
             <form class="login_form">
                 <i class="iconfont icon-user"></i>
                 <i class="iconfont icon-key"></i>
-                <input type="text" class="input_txt" placeholder="邮箱/手机号">
-                <input type="password" class="input_pass" placeholder="密码">
+                <input type="text" name="username" class="input_txt" placeholder="邮箱/手机号">
+                <input type="password" name="password" class="input_pass" placeholder="密码">
                 <input type="submit" class="input_sub" value="登 录">
             </form>
         </div>
@@ -37,26 +37,25 @@
         var baseUrl = 'http://localhost:8080';
         $('.input_sub').click(function (e) {
             e.preventDefault();
-            //获取登录名
-            var input_txt = $('.input_txt').val();
-            //获取密码
-            var input_pass = $('.input_pass').val();
-            console.log(input_txt);
-            console.log(input_pass);
+            // //以下是获取数据的第一种方式，比较普通常规
+            // //获取登录名
+            // var input_txt = $('.input_txt').val();
+            // //获取密码
+            // var input_pass = $('.input_pass').val();
+
+            //获取数据的另一种方式
+            var data = $('form').serialize();
             $.ajax({
                 type: 'post',
                 url: baseUrl + '/admin/user/login',
-                data: {
-                    username: input_txt,
-                    password: input_pass,
-                },
-                dataType:'json',
+                data:data,
+                dataType: 'json',
                 success: function (res) {
-                    if (res.msg == "登录成功") {
-                        alert("登录成功");
+                    if (res.code == 200) {
+                        alert(res.msg);
                         location.href = "index.html";
                     } else {
-                        alert("登录失败");
+                        alert(res.msg);
                     }
                     $('.input_txt').val("");
                     $('.input_pass').val("");
