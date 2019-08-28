@@ -167,6 +167,9 @@
         var keyWords = keyWords.substring(7);
         $.get(baseUrl + '/index/search', {
             key: keyWords,
+            type:'',
+            page:'',
+            perpage:'',
         }, function (res) {
             var str = template('list', {
                 arr: res.data.data,
