@@ -151,7 +151,7 @@
     <!--  文章类型 引擎模板 -->
     <script id="wenzhangleixing" type="text/html">
         {{each arr}}
-        <li><a href="article.html?id={{$value.id}}">{{$value.name}}</a></li>
+        <li><a href="list.html?id={{$value.id}}">{{$value.name}}</a></li>
         {{/each}}
     </script>
 
@@ -160,11 +160,13 @@
     type    string    文章类型id，可以为空，为空返回所有类型文章
     page    number    当前页，为空返回第1页
     perpage number    每页显示条数，为空默认每页6条 -->
+
     <!-- 显示 -->
     <script>
         var baseUrl = 'http://localhost:8080';
         var keyWords = location.search;
-        var keyWords = keyWords.substring(7);
+        keyWords = keyWords.substring(7);
+        console.log(keyWords)
         $.get(baseUrl + '/index/search', {
             key: keyWords,
             type:'',
@@ -200,6 +202,23 @@
         }, 'json');
     </script>
 
+    <!-- 根据文章类型获取文章 (这个位置需要修改下，判断一下如何获取关键词还是id？？？？？？？？)--> 
+    <!-- <script>
+        var baseUrl = 'http://localhost:8080';
+        var keyWords = location.search;
+        keyWords = keyWords.replace(/\D/g, '');
+        $.get(baseUrl + '/index/search', {
+            key: '',
+            type:keyWords,
+            page:'',
+            perpage:'',
+        }, function (res) {
+            var str = template('list', {
+                arr: res.data.data,
+            });
+            $('.list_title').after(str);
+        },'json');
+    </script> -->
     <!-- **********************************一周模板排行 S******************************-->
     <script>
         $.ajax({
