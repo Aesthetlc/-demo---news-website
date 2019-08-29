@@ -15,6 +15,7 @@
     <script src="js/jedate/js/jedate.js"></script>
     <script src="js/tinymce/js/tinymce/tinymce.min.js"></script>
     <script src="js/tinymce/js/tinymce_setup.js"></script>
+    <script src="js/template-web.js"></script>
 </head>
 
 <body>
@@ -27,25 +28,21 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail3" value="文章标题文字">
+                        <input name="title" type="email" class="form-control" id="inputEmail3" value="文章标题文字">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
-                        <img src="images/pic06.jpg" class="article_cover">
-                        <input type="file" id="exampleInputFile">
+                        <img src="" class="article_cover">
+                        <input name="cover" type="file" id="exampleInputFile">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
-                            <option>类别一</option>
-                            <option>类别二</option>
-                            <option>类别三</option>
-                            <option selected>类别四</option>
-                            <option>类别五</option>
+                        <select class="form-control" name="categoryId">
+                            <!-- 文章类型 模板引擎 -->
                         </select>
                     </div>
                 </div>
@@ -54,7 +51,7 @@
                     <div class="col-sm-4">
 
                         <div class="input-group">
-                            <input type="text" class="form-control" value="2019-05-17" id="dateinput">
+                            <input name="date" type="text" class="form-control" id="dateinput">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"
                                     onclick="jeDate('#dateinput',{trigger:false,format: 'YYYY-MM-DD'})"><i
@@ -66,7 +63,7 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="rich_content" name="content" placeholder="文章内容" value="文章内容">
+                        <input type="text" class="form-control" id="rich_content" placeholder="文章内容" value="文章内容">
                     </div>
                 </div>
                 <div class="form-group">
@@ -78,6 +75,78 @@
         </div>
     </div>
 
+
+    <!-- 文章类型 模板引擎 -->
+    <script id="wenzhangleixing" type="text/html">
+        {{each arr}}
+        <option value="{{$value.id}}" {{if $value.id == categoryId}} selected {{/if}}>{{$value.name}}</option>
+        {{/each}}
+    </script>
+
+    <script>
+        var baseUrl = 'http://localhost:8080';
+
+        // var id = location.search.split("=")[1];
+        var url = new URL('aaa.html' + location.search, 'http://www.xxx.com')
+        var id = url.searchParams.get('id');
+        var categoryId = url.searchParams.get('categoryId');
+
+        //所有文章类别
+        $.get(baseUrl + '/admin/category/list', function (res) {
+            var str = template('wenzhangleixing', {
+                arr: res.data,
+                categoryId:categoryId
+            });
+            $('select').html(str);
+        }, 'json');
+
+        //根据id获取文章信息
+        $.get(baseUrl + '/admin/article/search', {
+            id: id
+        }, function (res) {
+            $('.col-sm-10 .form-control').val(res.data.title);
+            //这个位置接口有点问题，了解流程方式就可以，
+            $('.article_cover').attr('src', res.data.cover);
+            $('#dateinput').val(res.data.date);
+            $('#rich_content').val(res.data.content);
+        }, 'json')
+
+        //文章编辑
+        $('body').on('click', '.btn-success', function (e) {
+            e.preventDefault();
+            var formData = new FormData($('form')[0]);
+
+            formData.append('id',id);
+            //获取 富文本的内容值
+            formData.append('content', tinyMCE.activeEditor.getContent());
+
+            $.ajax({
+                type: 'post',
+                url: baseUrl + '/admin/article/edit',
+                dataType: 'json',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    alert('修改成功！');
+                    location.href="article_list.html"
+                }
+            })
+        })
+
+        //  ?title=你好，这是以恶搞
+        //  &cover=http://localhost:8080/7bbbc2c6fee0d7c9d403f5179f5d65a6
+        //  &categoryId=3
+        //  &date=2019-08-23
+        //  &content=<p>你好</p>
+        // var str = location.search;
+        // var arr = str.split("&");
+        // var title = decodeURI((arr[0].split("=")[1]));
+        // var cover = (arr[1].split("8080/")[1]);
+        // var categoryId = (arr[2].split("=")[1]);
+        // var date = (arr[3].split("=")[1]);
+        // var content = decodeURI((arr[4].split("=")[1]));
+    </script>
 </body>
 
 </html>
