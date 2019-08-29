@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
     <script src="js/jquery-1.12.4.min.js"></script>
+    <script src="js/template-web.js"></script>
 
 </head>
 
@@ -24,38 +25,38 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="李思思">
+                        <input type="text" class="form-control" id="username" name="username">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="思思">
+                        <input type="text" class="form-control" id="nickname" name="nickname">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="lisisi@126.com">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
-                    <div class="col-sm-10">
-                        <img src="images/2.jpg" alt="" class="user_pic">
-                        <input type="file" id="exampleInputFile">
+                        <input type="text" class="form-control" id="email" name="email">
                     </div>
                 </div>
 
                 <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
-                        <div class="col-sm-4">
-                            <input type="password" class="form-control" id="inputEmail3" value="12345678">
-                        </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
+                    <div class="col-sm-10">
+                        <img src="" alt="" class="user_pic">
+                        <input type="file" id="user_pic" name="user_pic">
                     </div>
-               
-    
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-4">
+                        <input name="password" type="password" class="form-control" id="password">
+                    </div>
+                </div>
+
+
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-success">修改</button>
@@ -65,6 +66,43 @@
         </div>
     </div>
 
+
+    <!-- 个人页面修改 -->
+    <script>
+        var baseUrl = 'http://localhost:8080';
+        $.get(baseUrl + '/admin/user/detail', function (res) {
+            $('#username').val(res.data.username);
+            $('#nickname').val(res.data.nickname);
+            $('#email').val(res.data.email);
+            $('.user_pic').attr('src', res.data.userPic);
+            $('#password').val(res.data.password);
+        }, 'json')
+    </script>
+
+    <!-- 修改个人信息 -->
+    <script>
+        $('body').on('click', '.btn-success', function (e) {
+            e.preventDefault();
+            var formData = new FormData($('form')[0]);
+            $.ajax({
+                type: 'post',
+                url: baseUrl + '/admin/user/edit',
+                dataType:'json',
+                data: formData,
+                processData: false, // 不让jQuery将data处理成字符串
+                contentType: false, // 不让jQuery自动设置Content-Type
+                success:function(res){
+                    if(res.msg===200){
+                        alert(res.msg);
+                        location.reload();
+                    }else{
+                        alert(res.msg);
+                    }
+                }
+
+            })
+        })
+    </script>
 </body>
 
 </html>
