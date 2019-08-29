@@ -43,6 +43,7 @@
         </div>
     </div>
 
+    <!-- 新增模板 html样式 -->
     <div class="modal fade" id="addModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -70,6 +71,7 @@
         </div>
     </div>
 
+    <!-- 新增分类 模态框 -->
     <script>
         var baseUrl = 'http://localhost:8080';
         $('#addModal').modal({
@@ -78,7 +80,6 @@
         });
 
         $('#model_shutoff').click(function () {
-            alert('shutoff');
             $('#addModal').modal('hide');
         });
 
@@ -99,24 +100,85 @@
             })
             $('#addModal').modal('hide');
         });
+    </script>
 
-        $('.category_table').delegate('a', 'click', function () {
-            if ($(this).hasClass('btn-info')) {
-                $('#addModal .modal-title').html('修改分类名称');
-                $('#addModal').modal('show');
-            }
+    <!-- 修改模板 html样式 -->
+    <div class="modal fade" id="editModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                    <h4 class="modal-title">修改分类</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">分类名称:</label>
+                            <input name="name" type="text" class="form-control" id="edit-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">分类别名:</label>
+                            <input name="slug" type="text" class="form-control" id="edit-slug">
+                            <input name="id" type="hidden" id="edit-id">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="edit_shutoff">关闭</button>
+                    <button type="button" class="btn btn-primary" id="edit_add">修改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 修改分类 模态框 -->
+    <script>
+        var baseUrl = 'http://localhost:8080';
+        //事件对象
+        $('body').on('click', '.btn-info', function () {
+            var data = this.dataset;
+            $('#editModal').modal('show');
+            $('#edit-name').val(data.name);
+            $('#edit-slug').val(data.slug);
+            $('#edit-id').val(data.id);
+        });
+
+        $('#edit_add').click(function () {
+            var data = $('form').serialize();
+            console.log(data);
+            $.post(baseUrl + '/admin/category/edit', data, function (res) {
+                if (res.code === 200) {
+                    location.href="article_category.html"
+                } else {
+                    alert("修改失败");
+                }
+            },'json')
         })
+
+        $('#editModal').modal({
+            show: false,
+            backdrop: false
+        });
+
+        $('#edit_shutoff').click(function () {
+            $('#editModal').modal('hide');
+        });
+
+        $('#edit_add').click(function () {
+            $('#addModal').modal('hide');
+        });
     </script>
 
 
-    <!-- 所有分类  模板引擎 -->
+    <!-- 获取所有分类  模板引擎 -->
     <script id="category" type="text/html">
         {{each arr}}
         <tr>
             <td>{{$value.name}}</td>
             <td>{{$value.slug}}</td>
             <td class="text-center">
-                <a href="javascript:;" class="btn btn-info btn-xs">编辑</a>
+                <a href="javascript:;" class="btn btn-info btn-xs" data-id="{{$value.id}}" data-name="{{$value.name}}"
+                    data-slug="{{$value.slug}}">编辑</a>
                 <a href="javascript:;" class="btn btn-danger btn-xs" data-id="{{$value.id}}">删除</a>
             </td>
         </tr>
