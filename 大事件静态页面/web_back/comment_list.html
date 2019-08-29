@@ -73,8 +73,15 @@
       <td>{{$value.date}}{{$value.time}}</td>
       <td>{{$value.state}}</td>
       <td class="text-center">
-        <a href="javascript:editTr( 'rejected',1 );" class="btn btn-warning btn-xs">拒绝</a>
-        <a href="javascript:editTr( 'trashed',1 );" class="btn btn-danger btn-xs">删除</a>
+        {{if $value.state=='待审核'}}
+        <a href="javascript:;" class="btn btn-info btn-xs" data-id="{{$value.id}}">批准</a>
+        <a href="javascript:;" class="btn btn-danger btn-xs" data-id="{{$value.id}}">删除</a>
+        {{else if $value.state=='已通过'}}
+        <a href="javascript:;" class="btn btn-warning btn-xs" data-id="{{$value.id}}">拒绝</a>
+        <a href="javascript:;" class="btn btn-danger btn-xs" data-id="{{$value.id}}">删除</a>
+        {{else if $value.state=='已拒绝'}}
+        <a href="javascript:;" class="btn btn-danger btn-xs" data-id="{{$value.id}}">删除</a>
+        {{/if}}
       </td>
     </tr>
     {{/each}}
@@ -109,9 +116,63 @@
       })
       return title;
     }
-    console.log(selectTitle(257));
   </script>
 
+  <!-- 删除列表功能 -->
+  <script>
+    $('body').on('click', '.btn-danger', function (e) {
+      e.preventDefault();
+      var deleteId = $(this).attr('data-id');
+      var that = $(this);
+      $.post(baseUrl + '/admin/comment/delete', {
+        id: deleteId
+      }, function (res) {
+        if (res.code === 200) {
+          that.parents('tr').remove();
+          location.reload();
+        }
+        alert(res.msg);
+      });
+    })
+  </script>
+
+  <!-- 批准功能实现 -->
+  <script>
+    $('body').on('click', '.btn-info', function (e) {
+      e.preventDefault();
+      var pizhunId = $(this).attr('data-id');
+      var that = $(this);
+      $.post(baseUrl + '/admin/comment/pass', {
+        id: pizhunId
+      }, function (res) {
+        if (res.code === 200) {
+          alert(res.msg);
+          location.reload();
+        }else{
+          alert(res.msg);
+        }
+      });
+    })
+  </script>
+
+  <!-- 拒绝功能实现 -->
+  <script>
+      $('body').on('click', '.btn-warning', function (e) {
+        e.preventDefault();
+        var jujueId = $(this).attr('data-id');
+        var that = $(this);
+        $.post(baseUrl + '/admin/comment/reject', {
+          id: jujueId
+        }, function (res) {
+          if (res.code === 200) {
+            alert(res.msg);
+            location.reload();
+          }else{
+            alert(res.msg);
+          }
+        });
+      })
+    </script>
 
 
 
