@@ -10,13 +10,12 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/jquery.pagination.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
-    <!-- <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
-    <script type="text/javascript" src="js/jquery.pagination.min.js"></script> -->
-
     <!-- 模板引擎，jq引入一波 -->
     <script src="./js/template-web.js"></script>
     <script src="./js/jquery-1.12.4.min.js"></script>
     <script src="./js/jquery.pagination.min.js"></script>
+
+    
 </head>
 
 <body>
@@ -54,9 +53,11 @@
     <div class="main_con clearfix">
         <div class="left_con setfr">
             <div class="list_title">
-                <h3>科 技</h3>
+                <h3></h3>
             </div>
-            <!-- 内容显示 模板引擎 -->
+            <div class="neirong">
+                <!-- 内容显示 模板引擎 -->
+            </div>
             <div id="pagination" class="page"></div>
         </div>
         <div class="right_con setfl">
@@ -96,14 +97,12 @@
     </div>
 
 
-
-
     <!-- 内容显示 模板引擎 -->
     <script id="list" type="text/html">
         {{each arr}}
         <div class="common_news_list">
-            <a href="#" class="list_pic"><img src="{{$value.cover}}" alt=""></a>
-            <h4><a href="#">{{$value.title}}</a></h4>
+            <a href="article.html?id={{$value.id}}" class="list_pic"><img src="{{$value.cover}}" alt=""></a>
+            <h4><a href="article.html?id={{$value.id}}">{{$value.title}}</a></h4>
             <p>{{$value.content}}
             </p>
             <div class="new_info">
@@ -155,70 +154,50 @@
         {{/each}}
     </script>
 
-
-    <!-- key     string    搜索关键词，可以为空，为空返回某类型所有文章
-    type    string    文章类型id，可以为空，为空返回所有类型文章
-    page    number    当前页，为空返回第1页
-    perpage number    每页显示条数，为空默认每页6条 -->
-
-    <!-- 显示 -->
+    <!-- 页面初始化数据&分页显示数据 -->
     <script>
         var baseUrl = 'http://localhost:8080';
-        var keyWords = location.search;
-        keyWords = keyWords.substring(7);
-        console.log(keyWords)
-        $.get(baseUrl + '/index/search', {
-            key: keyWords,
-            type:'',
-            page:'',
-            perpage:'',
-        }, function (res) {
-            var str = template('list', {
-                arr: res.data.data,
-            });
-            $('.search_txt').val(keyWords);
-            $(function () {
-                $("#pagination").pagination({
-                    currentPage: res.page,
-                    totalPage: res.pages,
-                    //这个位置需要了解一下********************
-                    callback: function (current) {
-                        $.get(baseUrl + '/index/search', {
-                            key: keyWords,
-                            page: current
-                        }, function (res) {
-                            console.log(current)
-                            var str = template('list', {
-                                arr: res.data.data,
-                            });
-                            $('.left_con .common_news_list').remove();
-                            $('.list_title').after(str);
-                            //这个位置需要了解一下********************
-                        }, "json")
-                    }
-                });
-            });
-            $('.list_title').after(str);
-        }, 'json');
-    </script>
+        var id = location.search;
+        var url = new URL('xxx.html'+location.search,'http://www.xxx.com');
+        id = url.searchParams.get('id');
+        var key = url.searchParams.get('key');
+        //params
+        //存放 type----id,page----当前页（初始值第一页）,key----搜索框中的关键词
+        var params = {
+            type: id,
+            page: 1,
+            key: key,
+        }
 
-    <!-- 根据文章类型获取文章 (这个位置需要修改下，判断一下如何获取关键词还是id？？？？？？？？)--> 
-    <!-- <script>
-        var baseUrl = 'http://localhost:8080';
-        var keyWords = location.search;
-        keyWords = keyWords.replace(/\D/g, '');
-        $.get(baseUrl + '/index/search', {
-            key: '',
-            type:keyWords,
-            page:'',
-            perpage:'',
-        }, function (res) {
-            var str = template('list', {
-                arr: res.data.data,
+        function fenye(page, pages) {
+            $("#pagination").pagination({
+                currentPage: page,
+                totalPage: pages,
+                callback: function (current) {
+                    params.page = current;
+                    initData();
+                }
             });
-            $('.list_title').after(str);
-        },'json');
-    </script> -->
+        }
+
+        function initData() {
+            $.get(baseUrl + '/index/search', params, function (res) {
+                var str = template('list', {
+                    arr: res.data.data,
+                });
+                //这个位置需要判断一下
+                //判断：当您在搜索框中搜索的时候是，选择全局搜索还是在当前选择中选择
+                if (params.key && params.key.length>0) {
+                    $('.list_title').html('<h3>搜索"' + params.key + '"的结果:</h3>');
+                } else {
+                    $('.list_title').html('<h3>' + res.data.data[0].category + '</h3>');
+                }
+                $('.neirong').html(str);
+                fenye(res.page, res.pages);
+            }, 'json');
+        }
+        initData();
+    </script>
     <!-- **********************************一周模板排行 S******************************-->
     <script>
         $.ajax({
@@ -274,14 +253,20 @@
     <script>
         $('.search_btn').click(function (e) {
             e.preventDefault();
-            var value = $('.search_txt').val();
-            location.href = 'list.html?value=' + value;
+            var key = $('.search_txt').val();
+            params.page = 1;
+            params.key = key;
+            params.type = '';
+            initData();
         });
 
         $(document).keydown(function (event) {
             if (event.keyCode == 13) {
-                var value = $('.search_txt').val();
-                location.href = 'list.html?value=' + value;
+                var key = $('.search_txt').val();
+                params.page = 1;
+                params.key = key;
+                params.type = '';
+                initData();
             }
         });
     </script>
