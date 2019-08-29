@@ -300,6 +300,8 @@
 
 请求方式：post
 
+编码格式：application/x-www-form-urlencoded
+
 请求参数：
 
 | 名称     | 类型   | 说明            |

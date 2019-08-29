@@ -83,7 +83,7 @@ module.exports = {
       res.send({
         code: 200,
         msg: "获取成功",
-        data:commentRes
+        data: commentRes
       })
     } catch (error) {
       console.log(error)
@@ -122,7 +122,9 @@ module.exports = {
         {
           title: {
             [Op.substring]: key
-          },
+          }
+        },
+        {
           content: {
             [Op.substring]: key
           }
@@ -152,18 +154,26 @@ module.exports = {
         // 跳过页码
         offset
       })
+
       // 处理评论个数
       pageArticleRes = JSON.parse(JSON.stringify(pageArticleRes))
-      pageArticleRes.forEach(v => {
-        v.comments = v.comments.length
-        // 简略信息
-        v.intro = v.content.substring(0, 110) + "..."
-        if (v.cover.indexOf("https://") == -1) {
-          v.cover = `http://localhost:8080/${v.cover}`
-        }
-        // 类型
-        v.category = v.category.name
-      })
+      console.log(222);
+      try {
+        pageArticleRes.forEach(v => {
+          v.comments = v.comments.length
+          // 简略信息
+          v.intro = v.content.substring(0, 110) + "..."
+          if (v.cover.indexOf("https://") == -1) {
+            v.cover = `http://localhost:8080/${v.cover}`
+          }
+          // 类型
+          v.category = v.category.name
+        })
+      } catch (e) {
+        console.log(e.message);
+      }
+
+
       // 总页数
       let totalArticleRes = await Article.findAll({
         // 模糊查询
@@ -182,6 +192,7 @@ module.exports = {
       })
     } catch (error) {
       // console.log(error);
+      console.log(11);
       serverError(res)
     }
     // res.send("/search")
@@ -360,10 +371,10 @@ module.exports = {
         ],
         attributes: { exclude: ["isDelete"] }
       })
-      if(!currentArticleRes){
+      if (!currentArticleRes) {
         return res.send({
-          code:400,
-          msg:'id有误,请检查'
+          code: 400,
+          msg: 'id有误,请检查'
         })
       }
       // 累加

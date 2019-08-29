@@ -100,5 +100,22 @@ router.get('/delete',[
 // 注册路由 - 文章搜索
 router.get('/query',articleController.query)
 
+//////////////////////////////////////////////// 文章管理：图片异步上传；
+const multer = require('multer');
+const path = require('path');
+const { baseUrl } = reqlib('/config')
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+let up = multer({ storage: storage })
+router.post('/upload', up.single('file'), (req, res) => {
+  res.json({ location: baseUrl + '/' + req.file.filename });
+});
+
 
 module.exports = router

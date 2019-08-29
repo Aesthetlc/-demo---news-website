@@ -8,7 +8,12 @@ const commentController = reqlib("/controllers/commentController.js")
 
 // 错误信息提示中间件
 const { errorMsg } = reqlib("/utils/message")
-
+// 后台评论搜索
+router.get(
+  "/comment_search",
+  errorMsg,
+  commentController.comment_search
+)
 // 注册路由 - 评论审核通过
 router.post(
   "/pass",

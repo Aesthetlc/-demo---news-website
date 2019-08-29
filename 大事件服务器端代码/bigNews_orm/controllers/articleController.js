@@ -285,7 +285,9 @@ module.exports = {
         {
           title: {
             [Op.substring]: key
-          },
+          }
+        },
+        {
           content: {
             [Op.substring]: key
           }
@@ -332,9 +334,12 @@ module.exports = {
         // 模糊查询
         where
       })
+      let pages = Math.ceil(totalArticleRes.length / perpage);
       res.send({
         code: 200,
         msg: "数据获取成功",
+        pages,
+        page,
         data: {
           totalCount: totalArticleRes.length,
           totalPage:Math.ceil(totalArticleRes.length/perpage),
