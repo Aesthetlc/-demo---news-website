@@ -121,7 +121,7 @@
             评论: ({{data.comments}})</div>
         <div class="article_con">
 
-            <p>{{ data.content }}</p>
+            <p>{{@data.content}}</p>
 
         </div>
         <div class="article_links">
@@ -316,14 +316,14 @@
     <script>
         $('.search_btn').click(function (e) {
             e.preventDefault();
-            var value = $('.search_txt').val();
-            location.href = 'list.html?value=' + value;
+            var key = $('.search_txt').val();
+            location.href = "list.html?key=" + key;
         });
 
         $(document).keydown(function (event) {
             if (event.keyCode == 13) {
-                var value = $('.search_txt').val();
-                location.href = 'list.html?value=' + value;
+                var key = $('.search_txt').val();
+                location.href = "list.html?key=" + key;
             }
         });
     </script>
