@@ -10,8 +10,10 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/jquery.pagination.css">
     <script src="js/jquery-1.12.4.min.js"></script>
     <script src="./js/template-web.js"></script>
+    <script src="./js/jquery.pagination.min.js"></script>
 </head>
 
 <body>
@@ -27,7 +29,7 @@
                             <!-- 文章分类  模板引擎 -->
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
-                            <option>所有状态</option>
+                            <option value="">所有状态</option>
                             <option value="drafted">草稿</option>
                             <option value="published">已发布</option>
                         </select>
@@ -55,7 +57,8 @@
                 </tbody>
             </table>
 
-            <div class="row text-center">
+            <div class="row text-center page" id="pagination"></div>
+            <!-- <div class="row text-center">
                 <ul class="pagination pagination-sm">
                     <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
                     <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
@@ -69,7 +72,7 @@
                     <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
                     <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
                 </ul>
-            </div>
+            </div> -->
 
         </div>
     </div>
@@ -91,7 +94,8 @@
             <td class="text-center">{{$value.date}}</td>
             <td class="text-center">{{$value.state}}</td>
             <td class="text-center">
-                <a href="article_edit.html?id={{$value.id}}&categoryId={{$value.categoryId}}" class="btn btn-default btn-xs" data-id="{{$value.id}}">编辑</a>
+                <a href="article_edit.html?id={{$value.id}}&categoryId={{$value.categoryId}}"
+                    class="btn btn-default btn-xs" data-id="{{$value.id}}">编辑</a>
                 <a href="javascript:deleteTr( 1005 );" class="btn btn-danger btn-xs" data-id="{{$value.id}}">删除</a>
             </td>
         </tr>
@@ -101,17 +105,64 @@
     <!-- 获取文章列表 -->
     <script>
         var baseUrl = 'http://localhost:8080';
-        $.get(baseUrl + '/admin/article/query', function (res) {
-            var str = template('wenzhanglist', {
-                arr: res.data.data
-            });
-            $('tbody').html(str);
+        var url = new URL('aaa.html'+ location.search,'http://www.xxx.com');
+        var key = url.searchParams.get('key');
+        var params = {
+            key:key,
+            page: 1,
+            pages: '',
+            type:'',//文章类型
+            state:'',//文章状态
+        }
+
+        function initData() {
+            $.get(baseUrl + '/admin/article/query', params, function (res) {
+                var str = template('wenzhanglist', {
+                    arr: res.data.data
+                });
+                $('tbody').html(str);
+                params.pages = res.pages;
+                fenye(params.page, params.pages);
+            })
+        }
+        initData();
+    </script>
+
+    <!-- 筛选 -->
+    <script>
+        $('#btnSearch').click(function (e) {
+            e.preventDefault();
+            var selCategory = $('#selCategory').val();
+            var selStatus = $('#selStatus').val();
+            if(selStatus == "drafted"){
+                selStatus="草稿";
+            }else if(selStatus =="published"){
+                selStatus="已发布";
+            }
+            params.type = selCategory;
+            params.state = selStatus;
+            initData();
         })
     </script>
 
+    <!-- 分页显示 -->
+    <script>
+        function fenye(page, pages) {
+            $("#pagination").pagination({
+                currentPage: page,
+                totalPage: pages,
+                callback: function (current) {
+                    params.page = current;
+                    initData();
+                }
+            });
+        }
+    </script>
+
+
     <!-- 文章分类 模板引擎 -->
     <script id="wenzhangFenlei" type="text/html">
-        <option>所有分类</option>
+        <option id="selCategoryAll" value="">所有分类</option>
         {{each arr}}
         <option value="{{$value.id}}">{{$value.name}}</option>
         {{/each}}
@@ -152,10 +203,12 @@
             $.get(baseUrl + '/admin/article/search', {
                 id: id
             }, function (res) {
-               
+
             }, 'json')
         })
     </script>
+
+
 
 </body>
 
