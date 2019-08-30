@@ -144,6 +144,14 @@
             },
         })
     </script>
+
+    <!-- 搜索 -->
+    <script>
+        $('.icon-search').click(function () {
+            var keyWords = $('.search_form input').val();
+            window.parent.main_frame.location.href = 'article_list.html?key=' + keyWords;
+        })
+    </script>
 </body>
 
 </html>
